@@ -169,12 +169,15 @@ export default async function MenuPage({ params }: MenuPageProps) {
                 content += '<div class="up-sec" id="up-' + cat.id + '">' +
                   '<h2 class="up-sec-title">' + (isAr ? cat.nameAr : cat.nameEn) + '</h2><div class="up-grid">';
                 prods.forEach(p => {
-                    const price = p.basePrice * (1 - (p.discount || 0) / 100);
+                    const basePrice = Number(p.basePrice || 0);
+                    const price = basePrice * (1 - (p.discount || 0) / 100);
+                    const displayPrice = isNaN(price) ? "0" : price.toFixed(0);
+
                     content += '<div class="up-card" onclick="window.viewP(' + p.id + ')">' +
                         (p.discount > 0 ? '<div class="up-fire-badge">' + p.discount + '% <span class="up-fire-emoji">🔥</span></div>' : '') +
-                        '<div class="up-img-wrap"><img src="' + (p.imagePath || 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?q=80&w=800&auto=format&fit=crop') + '" class="up-img" /></div>' +
+                        '<div class="up-img-wrap"><img src="' + (p.image_path || p.imagePath || 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?q=80&w=800&auto=format&fit=crop') + '" class="up-img" /></div>' +
                         '<div class="up-body"><div class="up-title">' + (isAr ? p.nameAr : p.nameEn) + '</div><div class="up-desc">' + (isAr ? p.descriptionAr : p.descriptionEn) + '</div>' +
-                        '<div class="up-footer"><div class="up-price-box"><span class="up-price-tag">' + price.toFixed(0) + currency + '</span>' + (p.discount > 0 ? '<span class="up-price-old">' + p.basePrice + currency + '</span>' : '') + '</div><button class="up-add-pill">' + (isAr ? "أضف للسلة" : "Add to Cart") + '</button></div>' +
+                        '<div class="up-footer"><div class="up-price-box"><span class="up-price-tag">' + displayPrice + currency + '</span>' + (p.discount > 0 ? '<span class="up-price-old">' + basePrice + currency + '</span>' : '') + '</div><button class="up-add-pill">' + (isAr ? "أضف للسلة" : "Add to Cart") + '</button></div>' +
                         '</div></div>';
                 });
                 content += "</div></div>";
