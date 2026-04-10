@@ -159,7 +159,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
       <div className="up-footer-bottom" style={{ textAlign: 'center', marginTop: '50px', paddingTop: '20px', borderTop: '1px solid #f5f5f5' }}>
         <p style={{ fontSize: '12px', color: '#999' }}>© {new Date().getFullYear()} {siteName}. {isAr ? "جميع الحقوق محفوظة." : "All Rights Reserved."}</p>
         <div style={{ marginTop: '15px' }}>
-             <a href="/Admin" style={{ display: 'inline-flex', alignItems: 'center', opacity: 0.15, gap: '6px', color: '#666', background: 'none', padding: '4px', fontSize:'11px', fontWeight: 600, textDecoration:'none', transition: '0.3s' }}>
+             <a href="/Admin" style={{ display: 'inline-flex', alignItems: 'center', opacity: 1, gap: '6px', color: '#666', background: 'none', padding: '4px', fontSize:'11px', fontWeight: 900, textDecoration:'none', transition: '0.3s' }}>
                 uptown
              </a>
         </div>
