@@ -65,21 +65,21 @@ export default async function MenuPage({ params }: MenuPageProps) {
         
         .hero-section { background: #8B0000; padding: 20px 0; }
         .full-banner { 
-          width: calc(100% - 30px); margin: 0 auto 20px; height: auto; min-height: 250px;
-          aspect-ratio: 16/7;
+          width: calc(100% - 30px); margin: 0 auto 20px; 
+          aspect-ratio: 2.5 / 1;
           position: relative; overflow: hidden; border-radius: 40px; 
           box-shadow: 0 10px 30px rgba(0,0,0,0.2); 
         }
-        .banner-img { width: 100%; height: 100%; object-fit: contain; position: absolute; inset: 0; opacity: 1; transition: opacity 1s; }
+        .banner-img { width: 100%; height: 100%; object-fit: cover; position: absolute; inset: 0; opacity: 1; transition: opacity 1s; }
         .banner-img:not(.active) { opacity: 0; }
         
         .full-video { 
           width: calc(100% - 30px); margin: 0 auto; 
-          background: #000; aspect-ratio: 16/9; height: auto; max-height: 700px; 
+          background: #000; aspect-ratio: 1 / 1; max-height: 550px; 
           position: relative; overflow: hidden; border-radius: 40px; 
           box-shadow: 0 15px 45px rgba(0,0,0,0.3);
         }
-        .full-video video, .full-video iframe { width: 100%; height: 100%; object-fit: contain; display: block; }
+        .full-video video, .full-video iframe { width: 100%; height: 100%; object-fit: cover; display: block; }
 
         /* 🚀 STICKY FILTER: PRECISE ALIGNMENT */
         .sticky-category-bar { 
@@ -104,7 +104,7 @@ export default async function MenuPage({ params }: MenuPageProps) {
         .uptown-menu-container { background: #8B0000; padding: 10px 0 60px; }
         .up-sec-title { 
           display: block; font-size: 1.8rem; font-weight: 900; color: #fff; 
-          text-align: right; padding: 30px 25px 10px; margin: 0;
+          text-align: center; padding: 30px 25px 10px; margin: 0;
         }
         
         .up-grid { 
