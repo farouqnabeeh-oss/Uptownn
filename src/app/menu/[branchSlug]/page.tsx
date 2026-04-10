@@ -224,10 +224,14 @@ export default async function MenuPage({ params }: MenuPageProps) {
 
               window.viewP = async (id) => {
                 const p = allProducts.find(x => x.id === id);
-                let ads = []; try { ads = await (await fetch("/api/AddonsApi?productId=" + id)).json(); } catch(e){}
-                if (!ads.length) {
-                    ads = [{ id: 1, nameAr: "إضافات", nameEn: "Addons", items: [{ id: 1, nameAr: "جبنة إضافية", nameEn: "Cheese", price: 3 }, { id: 2, nameAr: "صوص خاص", nameEn: "Special Sauce", price: 0 }] }];
+                let ads = []; 
+                try { 
+                  const res = await fetch("/api/AddonsApi?productId=" + id);
+                  if (res.ok) ads = await res.json(); 
+                } catch(e) {
+                  console.error("Failed to fetch addons", e);
                 }
+                
                 window.UI.renderProductModal(p, ads, branch.slug, currency, 0);
               };
 

@@ -425,7 +425,32 @@ export async function getProductById(id: number) {
 
 export async function getAddonGroups(categoryId?: number | null, productId?: number | null) {
   noStore();
-  if (isMockMode) return mock.mockAddonGroups as unknown as AddonGroup[];
+  
+  if (isMockMode) {
+    let effectiveCategoryId = categoryId ?? null;
+    
+    // If productId is provided but no categoryId, look up the product's category
+    if (productId && !effectiveCategoryId) {
+      const p = mock.mockProducts.find(x => x.id === productId);
+      effectiveCategoryId = p?.categoryId ?? null;
+    }
+
+    if (!effectiveCategoryId) return [];
+
+    return mock.mockAddonGroups.filter(g => {
+      // Must match category
+      if (g.categoryId !== effectiveCategoryId) return false;
+      
+      // If filtering for a specific product, show product-specific groups OR generic category groups
+      if (productId) {
+        return g.productId === null || g.productId === productId;
+      }
+      
+      // If only filtering for category, show generic category groups only
+      return g.productId === null;
+    }) as unknown as AddonGroup[];
+  }
+
   const supabase = getSupabaseAdmin();
 
   let effectiveCategoryId = categoryId ?? null;
