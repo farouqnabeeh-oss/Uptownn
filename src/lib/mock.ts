@@ -88,6 +88,7 @@ export const mockBranches = [
       { name: "الدبلوماسي", fee: 20 },
       { name: "بيرزيت", fee: 30 },
       { name: "بير نبالا", fee: 40 },
+      { name: "خارجي", fee: 15 },
       { name: "مفرق 17 بيتونيا", fee: 25 },
       { name: "صناعة بيتونيا", fee: 17 },
       { name: "بيتونيا السنابل", fee: 17 },
