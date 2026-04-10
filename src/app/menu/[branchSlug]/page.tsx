@@ -65,24 +65,25 @@ export default async function MenuPage({ params }: MenuPageProps) {
         
         .hero-section { background: #8B0000; padding: 20px 0; }
         .full-banner { 
-          width: calc(100% - 30px); margin: 0 auto 20px; height: 260px; 
+          width: calc(100% - 30px); margin: 0 auto 20px; height: auto; min-height: 250px;
+          aspect-ratio: 16/7;
           position: relative; overflow: hidden; border-radius: 40px; 
           box-shadow: 0 10px 30px rgba(0,0,0,0.2); 
         }
-        .banner-img { width: 100%; height: 100%; object-fit: cover; position: absolute; inset: 0; opacity: 1; transition: opacity 1s; }
+        .banner-img { width: 100%; height: 100%; object-fit: contain; position: absolute; inset: 0; opacity: 1; transition: opacity 1s; }
         .banner-img:not(.active) { opacity: 0; }
         
         .full-video { 
           width: calc(100% - 30px); margin: 0 auto; 
-          background: #000; aspect-ratio: 16/9; max-height: 600px; 
+          background: #000; aspect-ratio: 16/9; height: auto; max-height: 700px; 
           position: relative; overflow: hidden; border-radius: 40px; 
           box-shadow: 0 15px 45px rgba(0,0,0,0.3);
         }
-        .full-video video, .full-video iframe { width: 100%; height: 100%; object-fit: cover; display: block; }
+        .full-video video, .full-video iframe { width: 100%; height: 100%; object-fit: contain; display: block; }
 
         /* 🚀 STICKY FILTER: PRECISE ALIGNMENT */
         .sticky-category-bar { 
-          position: sticky; top: 78px; z-index: 1000; 
+          position: sticky; top: 60px; z-index: 1000; 
           padding: 15px 0; background: #fff; border-bottom: 1px solid #f0f0f0; 
           box-shadow: 0 4px 12px rgba(0,0,0,0.03);
         }
