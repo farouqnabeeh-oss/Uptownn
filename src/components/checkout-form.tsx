@@ -5,6 +5,7 @@ import { Branch, SiteSettings } from "@/lib/types";
 import { saveOrderAction } from "@/lib/order-actions";
 import Script from "next/script";
 import { ShoppingBag, Truck, Utensils, Clock, CreditCard, Banknote, CheckCircle2, Info } from "lucide-react";
+import ReCAPTCHA from "react-google-recaptcha";
 
 type Props = {
     branch: Branch;
@@ -25,6 +26,7 @@ export default function CheckoutForm({ branch, settings, lang: initialLang }: Pr
     const [discount, setDiscount] = useState(0);
     const [total, setTotal] = useState(0);
     const [isOpen, setIsOpen] = useState(true);
+    const [captchaToken, setCaptchaToken] = useState<string | null>(null);
 
     const isAr = lang === "ar";
 
@@ -88,6 +90,12 @@ export default function CheckoutForm({ branch, settings, lang: initialLang }: Pr
         if (orderType === 'inRestaurant' && subType === 'pickup' && !pickupTime) return alert(isAr ? 'يرجى اختيار وقت الاستلام' : 'Please select pickup time');
         if (!policyAccepted) return alert(isAr ? 'يجب الموافقة على الشروط والسياسات للمتابعة' : 'You must accept the terms and policies to continue');
 
+        // Verify Captcha Check
+        const siteKey = process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY;
+        if (siteKey && !captchaToken) {
+            return alert(isAr ? "يرجى تأكيد أنك لست روبوت" : "Please confirm you are not a bot");
+        }
+
         startTransition(async () => {
             // Recalculate fresh values to avoid stale state
             const items = (window as any).Cart.getItems(branch.slug);
@@ -108,7 +116,7 @@ export default function CheckoutForm({ branch, settings, lang: initialLang }: Pr
                     tableNumber: orderType === 'delivery' ? null : (subType === 'table' ? table : pickupTime),
                     totalAmount: freshTotal,
                     paymentMethod: paymentMethod === 'cash' ? 'Cash' : 'Card'
-                }, items);
+                }, items, captchaToken || undefined);
 
                 if (res.isDemo && typeof window !== "undefined") {
                     console.log("[Checkout] Saving demo data locally for success page fallback");
@@ -372,8 +380,27 @@ export default function CheckoutForm({ branch, settings, lang: initialLang }: Pr
                         </label>
                     </div>
 
+                    {/* 🛡️ reCAPTCHA */}
+                    {process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY && (
+                        <div style={{ marginBottom: '30px', display: 'flex', justifyContent: 'center' }}>
+                            <ReCAPTCHA
+                                sitekey={process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY}
+                                onChange={(token) => setCaptchaToken(token)}
+                                hl={isAr ? 'ar' : 'en'}
+                            />
+                        </div>
+                    )}
+
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
-                        <button type="submit" className="uptown-btn red-gradient" disabled={isPending || !isOpen} style={{ opacity: !isOpen ? 0.6 : 1, cursor: !isOpen ? 'not-allowed' : 'pointer' }}>
+                        <button 
+                            type="submit" 
+                            className="uptown-btn red-gradient" 
+                            disabled={isPending || !isOpen || (!!process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY && !captchaToken)} 
+                            style={{ 
+                                opacity: (!isOpen || (!!process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY && !captchaToken)) ? 0.6 : 1, 
+                                cursor: (!isOpen || (!!process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY && !captchaToken)) ? 'not-allowed' : 'pointer' 
+                            }}
+                        >
                             <CheckCircle2 color="#fff" />
                             {!isOpen
                                 ? (isAr ? 'المطعم مغلق حالياً' : 'Restaurant Closed')

@@ -12,10 +12,24 @@ function SuccessContent() {
   const [loading, setLoading] = useState(true);
   const soundPlayed = useRef(false);
 
-  // 🔊 Play success chime using Web Audio API (Multiple notes for noticeability)
+  // 🔊 Play success sound (MP3 or fallback tones)
   const playSuccessSound = () => {
     if (soundPlayed.current) return;
     soundPlayed.current = true;
+    
+    // Try playing the shared success sound file first
+    try {
+      const audio = new Audio('/sounds/success.mp3');
+      audio.play().catch(() => {
+        // Fallback to generated tones if file fails or not found
+        playGeneratedTones();
+      });
+    } catch (e) {
+      playGeneratedTones();
+    }
+  };
+
+  const playGeneratedTones = () => {
     try {
       const ctx = new (window.AudioContext || (window as any).webkitAudioContext)();
       const playTone = (freq: number, start: number, duration: number, gain: number) => {
@@ -32,19 +46,14 @@ function SuccessContent() {
         osc.stop(ctx.currentTime + start + duration);
       };
 
-      // Play a standard "Notice" chime sequence twice for emphasis
       const playSequence = (offset: number) => {
         playTone(523.25, offset + 0.0, 0.3, 0.6); // C5
         playTone(659.25, offset + 0.1, 0.3, 0.5); // E5
         playTone(783.99, offset + 0.2, 0.3, 0.4); // G5
         playTone(1046.50, offset + 0.3, 0.6, 0.3); // C6
       };
-
       playSequence(0);
-      playSequence(0.8); // Repeat after 800ms
-    } catch (e) {
-      // Audio not supported — silent fail
-    }
+    } catch (e) {}
   };
 
   useEffect(() => {

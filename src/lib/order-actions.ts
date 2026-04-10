@@ -16,6 +16,31 @@ function isDBConfigured(): boolean {
     );
 }
 
+/**
+ * Verifies the reCAPTCHA token with Google's API.
+ */
+async function verifyRecaptcha(token: string) {
+    const secret = process.env.RECAPTCHA_SECRET_KEY;
+    if (!secret) {
+        console.warn("[reCAPTCHA] ⚠️ RECAPTCHA_SECRET_KEY not set. Skipping verification.");
+        return true;
+    }
+
+    try {
+        const response = await fetch("https://www.google.com/recaptcha/api/siteverify", {
+            method: "POST",
+            headers: { "Content-Type": "application/x-www-form-urlencoded" },
+            body: `secret=${secret}&response=${token}`
+        });
+
+        const data = await response.json();
+        return data.success;
+    } catch (err) {
+        console.error("[reCAPTCHA] ❌ Verification error:", err);
+        return false;
+    }
+}
+
 /** 
  * Finalizes an order after payment (Cash or Online).
  * Sets status to Paid.
@@ -66,8 +91,19 @@ export async function finalizeOrder(orderId: string | number) {
     }
 }
 
-export async function saveOrderAction(orderData: any, items: any[]) {
+export async function saveOrderAction(orderData: any, items: any[], captchaToken?: string) {
     console.log(`[saveOrderAction] Processing order for: ${orderData.customerName}`);
+
+    // Verify Captcha if token provided (or if secret is set)
+    if (process.env.RECAPTCHA_SECRET_KEY && !orderData.isDemo) {
+        if (!captchaToken) {
+            return { success: false, error: "Please complete the reCAPTCHA verification" };
+        }
+        const isValid = await verifyRecaptcha(captchaToken);
+        if (!isValid) {
+            return { success: false, error: "reCAPTCHA verification failed. Please try again." };
+        }
+    }
 
     if (!isDBConfigured()) {
         console.warn("[saveOrderAction] ⚠️ DB not configured. Running in demo mode.");
