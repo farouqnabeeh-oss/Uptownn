@@ -151,16 +151,15 @@ const UI = {
         const findGroupByItemId = (itemId) => addonGroups.find(group => group.items.some(item => item.id === itemId));
 
         const getVisibleGroups = () => addonGroups.filter(group => {
-            switch (group.groupType) {
-                case 'MealDrink':
-                case 'MealDrinkUpgrade':
-                case 'MealFries':
-                    return isMealSelection();
-                case 'Doneness':
-                    return !!product.hasDonenessOption;
-                default:
-                    return true;
+            const type = group.groupType;
+            if (['MealDrink', 'MealDrinkUpgrade', 'MealFries'].includes(type)) {
+                // Show if product is marked as a meal OR if the user is currently selecting a meal type
+                return !!product.hasMealOption || isMealSelection();
             }
+            if (type === 'Doneness') {
+                return !!product.hasDonenessOption;
+            }
+            return true;
         });
 
         const syncVisibleSelections = () => {
@@ -223,7 +222,7 @@ const UI = {
                 const currentlySelected = state.selectedAddOns.some(existing => existing.id === item.id);
                 state.selectedAddOns = state.selectedAddOns.filter(existing => {
                     const existingGroup = findGroupByItemId(existing.id);
-                    return existingGroup?.id !== group.id;
+                    return existingGroup?.id === group.id ? false : true;
                 });
 
                 if (!currentlySelected || group.isRequired) {
@@ -265,6 +264,9 @@ const UI = {
         };
 
         const render = () => {
+            const body = panel.querySelector('.modal-body');
+            const scrollPos = body ? body.scrollTop : 0;
+            
             syncVisibleSelections();
 
             const selectedIds = getSelectedIds();
@@ -276,9 +278,12 @@ const UI = {
                     <button class="modal-close" onclick="UI.hideModal('product-modal-overlay','product-modal')">
                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#666" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
                     </button>
-                    <span class="modal-title">${Lang.localized(product.nameAr, product.nameEn)}</span>
+                    <span class="modal-title" style="font-size:1.2rem">${Lang.localized(product.nameAr, product.nameEn)}</span>
                 </div>
                 <div class="modal-body">
+                    <div class="product-modal-image-wrap">
+                        <img src="${product.imagePath || '/images/classic-cheeseburger__0x1e3y1qv68eiip.jpg'}" class="product-modal-image" alt="${product.nameEn}" />
+                    </div>
             `;
 
             const desc = Lang.localized(product.descriptionAr, product.descriptionEn);
@@ -289,15 +294,15 @@ const UI = {
             if (product.sizes?.length) {
                 html += `
                     <div class="option-group">
-                        <div class="option-group-title">${Lang.t('size')}</div>
+                        <div class="option-group-title" style="font-size:15px">${Lang.t('size')}</div>
                         <div class="option-stack">
                             ${product.sizes.map(size => {
                     const priceText = size.price > 0 ? `+${size.price}${currency}` : `${currency}`;
                     return `
-                                <div class="option-item ${state.selectedSize?.id === size.id ? 'selected' : ''}" data-action="size" data-id="${size.id}">
+                                <div class="option-item ${state.selectedSize?.id === size.id ? 'selected' : ''}" data-action="size" data-id="${size.id}" style="padding:10px 15px">
                                     <span class="option-item-price">${priceText}</span>
                                     <div class="option-item-label">
-                                        <span class="option-item-name">${Lang.localized(size.nameAr, size.nameEn)}</span>
+                                        <span class="option-item-name" style="font-size:14px">${Lang.localized(size.nameAr, size.nameEn)}</span>
                                         <div class="option-item-radio"></div>
                                     </div>
                                 </div>
@@ -312,16 +317,16 @@ const UI = {
                 const selectedSizePrice = state.selectedSize?.price || product.basePrice || 0;
                 html += `
                     <div class="option-group">
-                        <div class="option-group-title">${Lang.t('type')}</div>
+                        <div class="option-group-title" style="font-size:15px">${Lang.t('type')}</div>
                         <div class="option-stack">
                             ${product.types.map(type => {
                     const priceVal = hasCombinedSizeAndType ? selectedSizePrice + (type.price || 0) : type.price;
                     const priceText = priceVal > 0 ? `+${priceVal}${currency}` : `${currency}`;
                     return `
-                                <div class="option-item ${state.selectedType?.id === type.id ? 'selected' : ''}" data-action="type" data-id="${type.id}">
+                                <div class="option-item ${state.selectedType?.id === type.id ? 'selected' : ''}" data-action="type" data-id="${type.id}" style="padding:10px 15px">
                                     <span class="option-item-price">${priceText}</span>
                                     <div class="option-item-label">
-                                        <span class="option-item-name">${Lang.localized(type.nameAr, type.nameEn)}</span>
+                                        <span class="option-item-name" style="font-size:14px">${Lang.localized(type.nameAr, type.nameEn)}</span>
                                         <div class="option-item-radio"></div>
                                     </div>
                                 </div>
@@ -336,17 +341,17 @@ const UI = {
                 const groupLabel = Lang.localized(group.nameAr, group.nameEn);
                 return `
                     <div class="option-group">
-                        <div class="option-group-title">${groupLabel}</div>
+                        <div class="option-group-title" style="font-size:15px">${groupLabel}</div>
                         <div class="option-stack">
                             ${group.items.map(item => {
                     const isSelected = selectedIds.has(item.id);
                     const selectorClass = group.allowMultiple ? 'option-item-check' : 'option-item-radio';
                     const priceText = item.price > 0 ? `+${item.price}${currency}` : '';
                     return `
-                                    <div class="option-item ${isSelected ? 'selected' : ''}" data-action="addon" data-group-id="${group.id}" data-id="${item.id}">
+                                    <div class="option-item ${isSelected ? 'selected' : ''}" data-action="addon" data-group-id="${group.id}" data-id="${item.id}" style="padding:10px 15px">
                                         <span class="option-item-price">${priceText}</span>
                                         <div class="option-item-label">
-                                            <span class="option-item-name">${Lang.localized(item.nameAr, item.nameEn)}</span>
+                                            <span class="option-item-name" style="font-size:14px">${Lang.localized(item.nameAr, item.nameEn)}</span>
                                             <div class="${selectorClass}"></div>
                                         </div>
                                     </div>
@@ -359,16 +364,22 @@ const UI = {
 
             html += `
                 <div class="note-field">
-                    <label style="text-align:right; display:block; margin-bottom:10px; font-weight:900;">${Lang.t('addNote')}</label>
-                    <textarea id="product-note" placeholder="${Lang.t('notes')}..." style="width:100%; border-radius:15px; border:2px solid #eee; padding:15px; text-align:right;">${state.note}</textarea>
+                    <label style="text-align:right; display:block; margin-bottom:10px; font-weight:900; font-size:14px">${Lang.t('addNote')}</label>
+                    <textarea id="product-note" placeholder="${Lang.t('notes')}..." style="width:100%; border-radius:15px; border:2px solid #eee; padding:15px; text-align:right; font-size:14px">${state.note}</textarea>
                 </div>
                 </div>
                 <div class="modal-footer">
-                    <button class="add-to-cart-btn" data-action="add-to-cart">${Lang.t('addToCart')} (${totalPrice.toFixed(0)}${currency})</button>
+                    <button class="add-to-cart-btn" data-action="add-to-cart" style="padding:15px; font-size:15px">${Lang.t('addToCart')} (${totalPrice.toFixed(0)}${currency})</button>
                 </div>
             `;
 
             panel.innerHTML = html;
+            
+            // Restore scroll with a slight delay to ensure browser layout
+            const newBody = panel.querySelector('.modal-body');
+            if (newBody && scrollPos > 0) {
+                setTimeout(() => { newBody.scrollTop = scrollPos; }, 0);
+            }
 
             panel.querySelectorAll('[data-action]').forEach(element => {
                 element.addEventListener('click', () => {

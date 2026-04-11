@@ -43,8 +43,8 @@ function mapBranch(row: Record<string, unknown>): Branch {
     deliveryFee: toNumber(row.delivery_fee),
     deliveryZones: ((row.delivery_zones as any[]) ?? []).map(z => ({
       ...z,
-      nameAr: z.nameAr || z.name || "",
-      nameEn: z.nameEn || z.name || "",
+      nameAr: z.nameAr || z.name_ar || z.name || "",
+      nameEn: z.nameEn || z.name_en || z.name || "",
       fee: toNumber(z.fee)
     })),
     promoVideoUrl: (row.promo_video_url as string | null) ?? null,
@@ -416,10 +416,23 @@ export async function getProductById(id: number) {
 
   const product = mapProduct(data);
   const category = data.categories as { name_ar?: string; name_en?: string } | null;
+  
+  // Fetch Addon Groups for this product/category
+  const { data: addonGroupsData } = await supabase
+    .from("addon_groups")
+    .select("*, addon_group_items(*)")
+    .eq("category_id", product.categoryId)
+    .eq("is_active", true)
+    .or(`product_id.is.null,product_id.eq.${product.id}`)
+    .order("sort_order");
+
+  const addonGroups = (addonGroupsData ?? []).map(row => mapAddonGroup(row));
+
   return {
     ...product,
     categoryNameAr: category?.name_ar ?? "",
-    categoryNameEn: category?.name_en ?? ""
+    categoryNameEn: category?.name_en ?? "",
+    addonGroups
   };
 }
 
@@ -470,8 +483,11 @@ export async function getAddonGroups(categoryId?: number | null, productId?: num
   }
 
   if (!effectiveCategoryId) {
+    console.warn(`[getAddonGroups] ⚠️ No category found for Product #${productId}. Returning empty.`);
     return [];
   }
+
+  console.log(`[getAddonGroups] 🔍 Fetching groups for Category #${effectiveCategoryId}${productId ? ` and Product #${productId}` : ""}`);
 
   let query = supabase
     .from("addon_groups")

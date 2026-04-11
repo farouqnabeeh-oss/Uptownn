@@ -1,9 +1,9 @@
-import Script from "next/script";
 import { redirect } from "next/navigation";
 import { BodyClassName } from "@/components/body-class-name";
 import { getBranchBySlug, getMenuBanners, getSiteSettings, getCategories, getProducts } from "@/lib/data";
 import type { Category, Product, Branch, SiteSettings, MenuBanner } from "@/lib/types";
 import { cookies } from "next/headers";
+import MenuClient from "@/components/MenuClient";
 
 type MenuPageProps = {
   params: Promise<{
@@ -80,11 +80,12 @@ export default async function MenuPage({ params }: MenuPageProps) {
           box-shadow: 0 15px 45px rgba(0,0,0,0.3);
         }
         .full-video video, .full-video iframe { width: 100%; height: 100%; object-fit: cover; display: block; }
+        .full-video iframe { border: none; }
 
         /* 🚀 STICKY FILTER: PRECISE ALIGNMENT */
         .sticky-category-bar { 
-          position: sticky; top: 60px; z-index: 1000; 
-          padding: 15px 0; background: #fff; border-bottom: 1px solid #f0f0f0; 
+          position: sticky; top: 90px; z-index: 1000; 
+          padding: 15px 0; background: rgba(255, 255, 255, 1); border-bottom: 1px solid #f0f0f0; 
           box-shadow: 0 4px 12px rgba(0,0,0,0.03);
         }
         .category-scroll { display: flex; gap: 10px; overflow-x: auto; padding: 0 15px; scrollbar-width: none; }
@@ -95,7 +96,7 @@ export default async function MenuPage({ params }: MenuPageProps) {
           font-weight: 700; font-size: 14px; cursor: pointer; transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); 
         }
         .category-pill.active { 
-          background: linear-gradient(135deg, #8B0000 0%, #B91C1C 100%); 
+          background: linear-gradient(180deg, #e62b32 0, var(--primary) 100%); 
           color: #fff; border-color: transparent; font-weight: 800; 
           box-shadow: 0 6px 15px rgba(139, 0, 0, 0.3); transform: scale(1.05);
         }
@@ -134,19 +135,63 @@ export default async function MenuPage({ params }: MenuPageProps) {
         .up-footer { display: flex; align-items: center; justify-content: space-between; margin-top: auto; padding-top: 10px; }
         .up-price-box { display: flex; align-items: center; gap: 6px; }
         .up-price-tag { font-size: 1.4rem; font-weight: 900; color: #8B0000; }
-        .up-price-old { font-size: 12px; color: #94a3b8; text-decoration: line-through; font-weight: 700; }
+        .up-price-old { font-size: 11px; color: #94a3b8; text-decoration: line-through; font-weight: 700; }
         
         .up-add-pill { 
           background: linear-gradient(135deg, #8B0000 0%, #B91C1C 100%); 
-          color: #fff; border: none; padding: 12px 28px; border-radius: 12px; font-weight: 900; 
+          color: #fff; border: none; padding: 12px 24px; border-radius: 12px; font-weight: 900; 
           font-size: 13px; cursor: pointer; transition: 0.3s; box-shadow: 0 6px 15px rgba(139, 0, 0, 0.4); 
         }
 
         .up-fire-badge { 
-          position: absolute; top: 15px; left: 15px; background: #8B0000; 
-          color: #fff; padding: 6px 12px; border-radius: 50px; 
-          font-weight: 900; font-size: 11px; z-index: 10; 
+          position: absolute; top: 12px; left: 12px; background: #8B0000; 
+          color: #fff; padding: 4px 10px; border-radius: 50px; 
+          font-weight: 900; font-size: 10px; z-index: 10; 
+          display: flex; align-items: center; gap: 4px; box-shadow: 0 4px 10px rgba(139,0,0,0.3);
         }
+
+        @media (max-width: 600px) {
+          .up-grid { gap: 10px; padding: 10px; }
+          .up-card { border-radius: 20px; }
+          .up-img-wrap { height: 160px; }
+          .up-body { padding: 12px; }
+          .up-title { font-size: 1.1rem; }
+          .up-price-tag { font-size: 1.2rem; }
+          .up-desc { display: none; } 
+        }
+
+        .branch-header-name { display: block !important; }
+
+        /* 📸 PRODUCT MODAL REFINEMENTS */
+        .product-modal-image-wrap {
+          width: 100%;
+          height: 250px;
+          background: #f8f8f8;
+          border-radius: 25px;
+          overflow: hidden;
+          margin-bottom: 20px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+        }
+        .product-modal-image {
+          width: 100%;
+          height: 100%;
+          object-fit: contain;
+          mix-blend-mode: multiply;
+        }
+        .product-modal-desc {
+          font-size: 14px;
+          color: #64748B;
+          line-height: 1.6;
+          margin-bottom: 25px;
+          font-weight: 500;
+          text-align: center;
+          padding: 0 10px;
+        }
+
+        /* 🔽 HIDE LIST ELEMENTS */
+        .up-card .up-desc { display: none !important; }
       `}} />
 
       <div className="hero-gap" />
@@ -160,8 +205,8 @@ export default async function MenuPage({ params }: MenuPageProps) {
 
         {promoVideo && (
           <section className="full-video">
-            {promoVideo.includes("youtube")
-              ? <iframe src={`https://www.youtube.com/embed/${promoVideo.split("v=")[1] || promoVideo.split("/").pop()}?autoplay=1&mute=1&loop=1`} allowFullScreen />
+            {promoVideo.includes("youtube") || promoVideo.includes("vimeo")
+              ? <iframe src={promoVideo} allowFullScreen />
               : <video src={promoVideo} autoPlay muted loop playsInline />}
           </section>
         )}
@@ -177,98 +222,13 @@ export default async function MenuPage({ params }: MenuPageProps) {
         <div id="uptown-render-area"></div>
       </div>
 
-      <script id="uptown-data" type="application/json" dangerouslySetInnerHTML={{ __html: JSON.stringify({ categories, allProducts, branch, currency, isAr }) }} />
-
-      <Script id="uptown-core" strategy="afterInteractive">
-        {`
-          (() => {
-            const start = () => {
-              if (typeof window === 'undefined' || !window.UI || !window.Cart) return setTimeout(start, 50);
-              const { categories, allProducts, branch, currency, isAr } = JSON.parse(document.getElementById("uptown-data").textContent);
-              
-              const updateBadge = () => {
-                const count = window.Cart.getItems(branch.slug).length;
-                const cartBtn = document.getElementById("cart-btn");
-                if (cartBtn) {
-                   cartBtn.style.display = "flex";
-                   cartBtn.innerHTML = '<div class="cart-icon-wrapper" style="display:flex;align-items:center;justify-content:center;position:relative;cursor:pointer">' +
-                      '<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"></circle><circle cx="20" cy="21" r="1"></circle><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path></svg>' +
-                      (count > 0 ? '<div style="position:absolute;top:-5px;right:-5px;background:#8B0000;color:#fff;min-width:18px;height:18px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:900;box-shadow:0 4px-10px rgba(0,0,0,0.2)">' + count + '</div>' : '') +
-                    '</div>';
-                   cartBtn.onclick = () => { window.UI.renderCartModal(branch.slug, currency); window.UI.showModal("cart-modal-overlay", "cart-modal"); };
-                }
-              };
-
-              updateBadge();
-              window.Cart.onChange(updateBadge);
-
-              let content = "";
-              categories.forEach(cat => {
-                const prods = allProducts.filter(p => p.categoryId === cat.id);
-                if (prods.length === 0) return;
-
-                content += '<div class="up-sec" id="up-' + cat.id + '">' +
-                  '<h2 class="up-sec-title">' + (isAr ? cat.nameAr : cat.nameEn) + '</h2><div class="up-grid">';
-                prods.forEach(p => {
-                    const price = Number(p.basePrice || 0) * (1 - (p.discount || 0) / 100);
-                    content += '<div class="up-card" onclick="window.viewP(' + p.id + ')">' +
-                        (p.discount > 0 ? '<div class="up-fire-badge">-' + p.discount + '%</div>' : '') +
-                        '<div class="up-img-wrap"><img src="' + (p.image_path || p.imagePath || '/images/classic-cheeseburger__0x1e3y1qv68eiip.jpg') + '" class="up-img" /></div>' +
-                        '<div class="up-body"><div class="up-title">' + (isAr ? p.nameAr : p.nameEn) + '</div><div class="up-desc">' + (p.descriptionAr || p.descriptionEn || '') + '</div>' +
-                        '<div class="up-footer"><span class="up-price-tag">' + price.toFixed(0) + currency + '</span><button class="up-add-pill">' + (isAr ? "أضف للسلة" : "Add to Cart") + '</button></div>' +
-                        '</div></div>';
-                });
-                content += "</div></div>";
-              });
-              document.getElementById("uptown-render-area").innerHTML = content;
-
-              window.viewP = async (id) => {
-                const p = allProducts.find(x => x.id === id);
-                let ads = []; 
-                try { 
-                  const res = await fetch("/api/AddonsApi?productId=" + id);
-                  if (res.ok) ads = await res.json(); 
-                } catch(e) {
-                  console.error("Failed to fetch addons", e);
-                }
-                
-                window.UI.renderProductModal(p, ads, branch.slug, currency, 0);
-              };
-
-              // 🎬 Hero Cycling
-              let bannerIdx = 0; const banners = document.querySelectorAll(".banner-img");
-              if (banners.length > 1) {
-                setInterval(() => {
-                    banners[bannerIdx].classList.remove("active");
-                    bannerIdx = (bannerIdx + 1) % banners.length;
-                    banners[bannerIdx].classList.add("active");
-                }, 3000);
-              }
-
-              // Throttled ScrollSpy
-              const pills = document.querySelectorAll(".category-pill"); const secs = document.querySelectorAll(".up-sec");
-              let isScrolling = false;
-              pills.forEach(p => p.onclick = () => { 
-                isScrolling = true;
-                window.scrollTo({ top: document.getElementById("up-" + p.dataset.id).offsetTop - 130, behavior: "smooth" });
-                setTimeout(() => isScrolling = false, 800);
-              });
-
-              window.addEventListener("scroll", () => {
-                if (isScrolling) return;
-                let cur = "";
-                secs.forEach(s => { if (window.pageYOffset >= s.offsetTop - 180) cur = s.id.replace("up-", ""); });
-                pills.forEach(p => { 
-                  const active = p.dataset.id === cur;
-                  p.classList.toggle("active", active);
-                  if (active) p.scrollIntoView({ behavior: "smooth", inline: "center", block: "nearest" });
-                });
-              }, { passive: true });
-            };
-            start();
-          })();
-        `}
-      </Script>
+      <MenuClient 
+        categories={categories} 
+        allProducts={allProducts}
+        branch={branch}
+        isAr={isAr}
+        currency={currency}
+      />
     </>
   );
 }

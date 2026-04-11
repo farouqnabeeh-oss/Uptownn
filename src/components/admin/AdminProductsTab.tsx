@@ -320,8 +320,8 @@ export function AdminProductsTab({ products, categories, branches, settings }: P
               </td>
               <td>{product.category?.nameEn || "No Category"}</td>
               <td>{Number(product.basePrice || 0).toFixed(0)}{settings?.currencySymbol}</td>
-              <td>{product.sizes.length}</td>
-              <td>{product.types.length}</td>
+              <td>{product.sizes?.length || 0}</td>
+              <td>{product.types?.length || 0}</td>
               <td>
                 <button type="button" className="btn btn-outline btn-sm" onClick={() => editProduct(product)}>
                   {t('edit')}

@@ -7,36 +7,36 @@ export default async function ReturnPolicyPage() {
   const isAr = lang === "ar";
 
   const content = {
-    title: isAr ? "سياسة الإرجاع" : "Return & Refund Policy",
+    title: isAr ? "سياسة الإرجاع والتبديل" : "Return & Exchange Policy",
     tagline: isAr ? "نحن مهتمون برضاكم التام عن كل وجبة" : "Your satisfaction is our top priority",
     sections: [
       {
         icon: "clock",
-        title: isAr ? "وقت الإرجاع" : "Return Window",
+        title: isAr ? "نطاق الإرجاع والتبديل" : "Return & Exchange Window",
         text: isAr 
-          ? "نظراً لطبيعة المنتجات الغذائية، يجب الإبلاغ عن أي مشكلة في الطلب فور استلامه. نقبل المراجعات خلال 15 دقيقة من وقت التوصيل."
-          : "Due to the nature of food products, any issue with the order must be reported immediately upon receipt. We accept reviews within 15 minutes of delivery."
+          ? "نظراً لطبيعة المنتجات الغذائية، يجب الإبلاغ عن أي مشكلة في الطلب فور استلامه. نقبل المراجعات والتبديل خلال 15 دقيقة من وقت استلام الطلب لضمان الجودة."
+          : "Due to the nature of food products, any issue with the order must be reported immediately upon receipt. We accept reviews and exchanges within 15 minutes of receipt to ensure quality."
       },
       {
         icon: "alert-circle",
-        title: isAr ? "حالات الإرجاع" : "Eligible Cases",
+        title: isAr ? "حالات استحقاق التبديل" : "Eligible Cases",
         text: isAr 
-          ? "يتم قبول طلبات الإرجاع أو التعويض في حال استلام وجبة غير صحيحة، أو وجود نقص في الطلب، أو في حال وجود مشكلة في جودة المنتج."
-          : "Return or compensation requests are accepted if an incorrect meal is received, if there's a missing item, or if there's a product quality issue."
+          ? "يتم قبول طلبات التبديل في حال استلام وجبة غير صحيحة، أو وجود نقص في الطلب، أو في حال وجود ملاحظة جوهرية على جودة المنتج."
+          : "Exchange requests are accepted if an incorrect meal is received, if there's a missing item, or if there's a substantial quality concern."
       },
       {
         icon: "credit-card",
-        title: isAr ? "آلية التعويض" : "Refund Process",
+        title: isAr ? "آلية التعويض" : "Refund & Resolution",
         text: isAr 
-          ? "في حال قبول طلبك، سنقوم بإعادة إرسال الوجبة الصحيحة فوراً، أو إضافة رصيد لحسابك لاستخدامه في الطلب القادم، أو استرداد المبلغ نقداً."
-          : "If your request is accepted, we will immediately resend the correct meal, add credit to your account for future use, or provide a cash refund."
+          ? "في حال قبول طلبك، سنقوم بتبديل الوجبة فوراً، أو إضافة رصيد لحسابك لاستخدامه في الطلب القادم، أو استرداد المبلغ حسب نوع الدفع الأصلي."
+          : "If your request is accepted, we will immediately exchange the meal, add credit to your account for future use, or provide a refund based on the original payment method."
       },
       {
         icon: "phone-call",
-        title: isAr ? "كيفية التواصل" : "How to Contact",
+        title: isAr ? "التواصل للمطالبات" : "Contact for Claims",
         text: isAr 
-          ? "لطلب الإرجاع، يرجى التواصل معنا فوراً عبر رقم خدمة العملاء الموحد أو عبر الواتساب الخاص بالفرع الذي تم اطلب منه."
-          : "To request a return, please contact us immediately via the unified customer service number or via the WhatsApp of the branch you ordered from."
+          ? "لأي مطالبة تتعلق بالطلب، يرجى التواصل معنا فوراً عبر رقم الهاتف المعتمد 022950505 أو عبر الواتساب الخاص بالفرع المعني."
+          : "For any order claims, please contact us immediately via our verified number 022950505 or via the branch WhatsApp."
       }
     ],
     footer: isAr ? "آخر تحديث: أبريل 2026" : "Last Updated: April 2026"

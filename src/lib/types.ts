@@ -22,6 +22,8 @@ export type Branch = {
   closingTime: string | null; // e.g., "23:00"
   deliveryFee: number;
   deliveryZones?: DeliveryZone[];
+  deliveryDiscountPercent?: number;
+  freeDelivery?: boolean;
   promoVideoUrl?: string | null;
   createdAt: string;
   updatedAt: string;

@@ -45,6 +45,20 @@ export async function GET(_: Request, { params }: RouteContext) {
       nameEn: type.nameEn,
       price: type.price,
       description: type.description
+    })),
+    addonGroups: (product as any).addonGroups?.map((group: any) => ({
+      id: group.id,
+      nameAr: group.nameAr,
+      nameEn: group.nameEn,
+      groupType: group.groupType,
+      isRequired: group.isRequired,
+      allowMultiple: group.allowMultiple,
+      items: group.items.map((item: any) => ({
+        id: item.id,
+        nameAr: item.nameAr,
+        nameEn: item.nameEn,
+        price: item.price
+      }))
     }))
   });
 }

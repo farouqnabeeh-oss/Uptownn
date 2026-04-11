@@ -66,6 +66,13 @@ export async function finalizeOrder(orderId: string | number) {
         if (orderError) throw orderError;
         if (!order) throw new Error("Order not found");
 
+        const { data: items, error: itemsError } = await supabase
+            .from("order_items")
+            .select("*")
+            .eq("order_id", orderId);
+
+        if (itemsError) console.warn("[finalizeOrder] Failed to fetch items for email:", itemsError.message);
+
         // 2. Update status to Paid
         const { error: updateError } = await supabase
             .from("orders")
@@ -77,6 +84,13 @@ export async function finalizeOrder(orderId: string | number) {
             .eq("id", orderId);
 
         if (updateError) throw updateError;
+
+        // 3. Send Confirmation Email (Mocked for now)
+        try {
+            await sendOrderConfirmationEmail(order, items || []);
+        } catch (emailErr: any) {
+            console.error(`[finalizeOrder] 📧 Email failed but order is confirmed:`, emailErr.message);
+        }
 
         console.log(`[finalizeOrder] ✅ Order ${orderId} finalized successfully.`);
         return { success: true };
@@ -130,7 +144,9 @@ export async function saveOrderAction(orderData: any, items: any[], captchaToken
 
         // 2. Insert Order
         const totalAmount = orderData.totalAmount ?? orderData.total_amount ?? 0;
-        const { data: order, error: orderError } = await supabase
+        console.log(`[saveOrderAction] 📦 Inserting order for customer ${customer.id}, amount ${totalAmount}...`);
+
+        const { data: orderResponse, error: orderError } = await supabase
             .from('orders')
             .insert({
                 branch_id: orderData.branchId,
@@ -144,18 +160,28 @@ export async function saveOrderAction(orderData: any, items: any[], captchaToken
                 total_amount: totalAmount,
                 status: "Pending",
                 payment_method: orderData.paymentMethod,
-                payment_status: "Pending",
-                notes: orderData.notes || null
+                payment_status: "Pending"
             })
             .select("id")
             .single();
 
-        if (orderError) throw orderError;
+        if (orderError) {
+            console.error("[saveOrderAction] ❌ Supabase Order Insert Error:", orderError);
+            throw new Error(`Order insertion failed: ${orderError.message}`);
+        }
+
+        if (!orderResponse || !orderResponse.id) {
+            console.error("[saveOrderAction] ❌ No ID returned from order insert. Response:", orderResponse);
+            throw new Error("Failed to retrieve order ID from database.");
+        }
+
+        const orderId = orderResponse.id;
+        console.log(`[saveOrderAction] ✨ Order created with ID: ${orderId}`);
 
         // 3. Insert Order Items
         const orderItems = items.map(item => ({
-            order_id: order.id,
-            product_id: item.id || null,
+            order_id: orderId,
+            product_id: item.id ? Number(item.id) : null,
             product_name_ar: item.nameAr || "",
             product_name_en: item.nameEn || "",
             quantity: item.quantity,
@@ -164,17 +190,21 @@ export async function saveOrderAction(orderData: any, items: any[], captchaToken
         }));
 
         if (orderItems.length > 0) {
+            console.log(`[saveOrderAction] 🛒 Inserting ${orderItems.length} items...`);
             const { error: itemsError } = await supabase.from("order_items").insert(orderItems);
-            if (itemsError) throw itemsError;
+            if (itemsError) {
+                console.error("[saveOrderAction] ❌ Order Items Insert Error:", itemsError);
+                throw itemsError;
+            }
         }
 
         // 4. Finalize immediately for Cash/WhatsApp orders
         if (orderData.paymentMethod === 'Cash') {
-            await finalizeOrder(order.id);
+            await finalizeOrder(orderId);
         }
 
-        console.log(`[saveOrderAction] ✅ Order ${order.id} saved successfully.`);
-        return { success: true, orderId: order.id };
+        console.log(`[saveOrderAction] ✅ Order ${orderId} finalized and saved successfully.`);
+        return { success: true, orderId: orderId };
 
     } catch (err: any) {
         console.error(`[saveOrderAction] ❌ Error:`, err.message);
@@ -219,4 +249,50 @@ export async function getOrderSummary(orderId: string | number) {
             order: null
         };
     }
+}
+
+/**
+ * Sends a confirmation email to the customer (Mock implementation).
+ * In production, this would use Resend, Nodemailer, or an AWS SES trigger.
+ */
+async function sendOrderConfirmationEmail(order: any, items: any[]) {
+    const email = order.customer_email || order.email;
+    if (!email || email.includes("customer@uptown.ps")) {
+        console.log(`[Email] ⚠️ No valid customer email found for order #${order.id}. Skipping.`);
+        return;
+    }
+
+    const date = new Date().toLocaleString('ar-PS', { timeZone: 'Asia/Gaza' });
+    const itemsList = items.map(item => {
+        const name = item.product_name_ar && item.product_name_en 
+            ? `${item.product_name_ar} / ${item.product_name_en}`
+            : (item.product_name_ar || item.product_name_en);
+        return `   - ${item.quantity}x ${name} (${item.price} ₪)`;
+    }).join('\n');
+    
+    const emailBody = `
+========================================
+        شكراً لتسوقكم من UPTOWN
+        Thank you for choosing UPTOWN
+========================================
+رقم الطلب / Order ID: #${order.id}
+التاريخ / Date: ${date}
+المبلغ الإجمالي / Total: ${order.total_amount} ₪
+طريقة الدفع / Payment: ${order.payment_method === 'Card' ? 'بطاقة ائتمان / Card (Online)' : 'نقدي / Cash'}
+الحالة / Status: مدفوع / Paid
+
+تفاصيل الطلب / Order Details:
+${itemsList}
+
+----------------------------------------
+تواصل معنا / Contact: uptownramallah@gmail.com
+الهاتف / Phone: 022950505
+رام الله - فلسطين / Ramallah - Palestine
+========================================
+    `;
+
+    console.log(`[Email Service] 📧 Sending email to ${email}...`);
+    console.log(emailBody);
+    
+    return true;
 }

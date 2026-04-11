@@ -1446,6 +1446,15 @@ html[dir="rtl"] .branch-discount-badge {
   transform: translateY(-1px);
 }
 
+@media (max-width: 640px) {
+  .category-btn {
+    min-height: 44px;
+    padding: 8px 18px;
+    font-size: 14px;
+    gap: 8px;
+  }
+}
+
 .category-btn.active {
   background: linear-gradient(180deg, #e62b32 0%, var(--primary) 100%);
   border-color: transparent;
@@ -2466,6 +2475,16 @@ html[dir="rtl"] .branch-discount-badge {
   border-radius: 18px;
   font-size: 1rem;
   font-weight: 900;
+}
+
+@media (max-width: 640px) {
+  .add-to-cart-btn,
+  .checkout-btn,
+  .submit-order-btn {
+    min-height: 50px;
+    font-size: 0.95rem;
+    padding: 12px;
+  }
 }
 
 .cart-empty {
@@ -5994,6 +6013,14 @@ html[dir="rtl"] .branch-discount-badge {
   box-shadow: 0 15px 35px rgba(227, 30, 36, 0.2);
 }
 
+@media (max-width: 640px) {
+  .add-to-cart-btn {
+    padding: 16px;
+    font-size: 1.1rem;
+    border-radius: 20px;
+  }
+}
+
 /* 📋 CHECKOUT VALIDATION STYLES */
 
 .option-item:hover {
@@ -6179,7 +6206,7 @@ html[dir="rtl"] .branch-discount-badge {
   border-radius: 20px;
   overflow: hidden;
   margin-bottom: 30px;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
 }
 
 .up-cat-banner {

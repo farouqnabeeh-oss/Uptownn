@@ -26,10 +26,10 @@ export default async function RootLayout({ children }: { children: React.ReactNo
   const isAr = lang === "ar";
   const siteName = isAr ? (settings?.siteNameAr || "أبتاون") : (settings?.siteName || "UPTOWN");
   const logoUrl = settings?.logoUrl;
-  const whatsapp = settings?.sitePhone || "970222951234";
-  const phone = settings?.sitePhone || "+970 2 2295 1234";
-  const email = settings?.siteEmail || "info@uptown.ps";
-  const address = settings?.siteAddress || (isAr ? "رام الله، فلسطين" : "Ramallah, Palestine");
+  const whatsapp = "970222950505";
+  const phone = "022950505";
+  const email = "uptownramallah@gmail.com";
+  const address = isAr ? "رام الله - فلسطين" : "Ramallah - Palestine";
 
   const header = (
     <header className="premium-header" id="site-header" style={{ borderBottom: '1px solid #eee', background: '#fff', padding: '2px 0', position: 'sticky', top: 0, zIndex: 2000 }}>
@@ -134,16 +134,25 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         </div>
 
         <div className="up-footer-col">
-          <h4 className="up-footer-title" style={{ fontSize: '18px', fontWeight: 900, marginBottom: '20px', color: '#000' }}>{isAr ? "تابعنا" : "Follow Us"}</h4>
+          <h4 className="up-footer-title" style={{ fontSize: '18px', fontWeight: 900, marginBottom: '20px', color: '#000' }}>Uptown Burger & Wings</h4>
           <div className="up-footer-socials" style={{ display: 'flex', gap: '15px' }}>
-            <a href="https://www.instagram.com/uptownramallah" target="_blank" className="up-social-link" style={{ color: '#000', transition: '0.3s' }}>
+            <a href="https://www.instagram.com/uptownramallah" target="_blank" className="up-social-link" style={{ color: '#E1306C', transition: '0.3s' }}>
               <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg>
             </a>
-            <a href="https://www.facebook.com/uptownramallah" target="_blank" className="up-social-link" style={{ color: '#000', transition: '0.3s' }}>
+            <a href="https://www.facebook.com/uptownramallah" target="_blank" className="up-social-link" style={{ color: '#1877F2', transition: '0.3s' }}>
               <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path></svg>
             </a>
             <a href="https://www.tiktok.com/@uptownps" target="_blank" className="up-social-link" style={{ color: '#000', transition: '0.3s' }}>
               <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M9 12a4 4 0 1 0 4 4V4a5 5 0 0 0 5 5"></path></svg>
+            </a>
+          </div>
+          <h4 className="up-footer-title" style={{ fontSize: '18px', fontWeight: 900, marginTop: '25px', marginBottom: '20px', color: '#000' }}>Pasta Signature</h4>
+          <div className="up-footer-socials" style={{ display: 'flex', gap: '15px' }}>
+            <a href="https://www.instagram.com/pastasignature" target="_blank" className="up-social-link" style={{ color: '#E1306C', transition: '0.3s' }}>
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg>
+            </a>
+            <a href="https://www.facebook.com/pastasignature" target="_blank" className="up-social-link" style={{ color: '#1877F2', transition: '0.3s' }}>
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path></svg>
             </a>
           </div>
         </div>
@@ -151,18 +160,21 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         <div className="up-footer-col">
           <h4 className="up-footer-title" style={{ fontSize: '18px', fontWeight: 900, marginBottom: '20px', color: '#000' }}>{isAr ? "طرق الدفع" : "Payment Methods"}</h4>
           <div className="up-footer-payments" style={{ display: 'flex', gap: '15px', alignItems: 'center' }}>
-            <img src="/images/visa.png" alt="Visa" style={{ height: '30px', width: 'auto' }} />
-             <img src="/images/Mastercard-logo.svg" alt="MasterCard" style={{ height: '35px', width: 'auto' }} />
+            <img src="/images/visa.png" alt="Visa" style={{ height: '35px', width: 'auto', filter: 'drop-shadow(0 4px 6px rgba(0,0,0,0.1))' }} />
+            <img src="/images/Mastercard-logo.svg" alt="MasterCard" style={{ height: '40px', width: 'auto', filter: 'drop-shadow(0 4px 6px rgba(0,0,0,0.1))' }} />
           </div>
         </div>
       </div>
       <div className="up-footer-bottom" style={{ textAlign: 'center', marginTop: '50px', paddingTop: '20px', borderTop: '1px solid #f5f5f5' }}>
         <p style={{ fontSize: '12px', color: '#999' }}>© {new Date().getFullYear()} {siteName}. {isAr ? "جميع الحقوق محفوظة." : "All Rights Reserved."}</p>
-        <div style={{ marginTop: '15px' }}>
-             <a href="/Admin" style={{ display: 'inline-flex', alignItems: 'center', opacity: 1, gap: '6px', color: '#666', background: 'none', padding: '4px', fontSize:'11px', fontWeight: 900, textDecoration:'none', transition: '0.3s' }}>
-                uptown
-             </a>
+        <div style={{ marginTop: '15px', display: 'flex', justifyContent: 'center', gap: '20px', fontSize: '12px', flexWrap: 'wrap' }}>
+
+          <a href="/policies/privacy" style={{ color: '#8b0000', textDecoration: 'none', fontWeight: 700 }}>{isAr ? "سياسة الخصوصية" : "Privacy Policy"}</a>
+          <a href="/policies/return" style={{ color: '#8b0000', textDecoration: 'none', fontWeight: 700 }}>{isAr ? "سياسة الإرجاع والتبديل" : "Return & Exchange Policy"}</a>
         </div>
+        <a href="/Admin" style={{ display: 'inline-flex', alignItems: 'center', opacity: 1, gap: '6px', color: '#666', background: 'none', padding: '4px', fontSize: '14px', fontWeight: 900, textDecoration: 'none', transition: '0.3s' }}>
+          uptown
+        </a>
       </div>
     </footer>
   );

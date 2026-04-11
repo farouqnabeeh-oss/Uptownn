@@ -20,7 +20,7 @@ export default function LayoutSwitcher({ header, footer, children }: Props) {
   }, [pathname]);
 
   // Define paths that should NOT have header and footer
-  const isExcluded = pathname.startsWith("/Admin") || pathname.startsWith("/Account/Login") || pathname.startsWith("/checkout");
+  const isExcluded = pathname.startsWith("/Admin") || pathname.startsWith("/Account/Login");
 
   if (isExcluded) {
     return <>{children}</>;

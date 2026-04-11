@@ -133,6 +133,8 @@ export async function saveBranchAction(formData: FormData): Promise<ActionResult
       closing_time: formData.get("ClosingTime") ? String(formData.get("ClosingTime")) : null,
       delivery_fee: toNumber(formData.get("DeliveryFee")),
       delivery_zones: parseJson<DeliveryZone[]>(formData.get("zonesJson")) ?? [],
+      delivery_discount_percent: toNumber(formData.get("DeliveryDiscountPercent")),
+      is_free_delivery: toBoolean(formData.get("FreeDelivery")),
       promo_video_url: formData.get("PromoVideoUrl") ? String(formData.get("PromoVideoUrl")) : null,
       updated_at: new Date().toISOString()
     };

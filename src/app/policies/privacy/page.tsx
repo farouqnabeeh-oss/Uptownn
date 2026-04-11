@@ -8,35 +8,35 @@ export default async function PrivacyPolicyPage() {
 
   const content = {
     title: isAr ? "سياسة الخصوصية" : "Privacy Policy",
-    tagline: isAr ? "نحن نولى أهمية قصوى لخصوصية بياناتكم" : "We prioritize the privacy of your data",
+    tagline: isAr ? "نحن نولي أهمية قصوى لخصوصية بياناتكم وأمانها" : "We prioritize the privacy and security of your data",
     sections: [
       {
         icon: "eye",
-        title: isAr ? "نظرة عامة" : "Overview",
+        title: isAr ? "جمع المعلومات" : "Information Collection",
         text: isAr
-          ? "توضح هذه السياسة كيفية تعامل مطعم أبتون مع بياناتكم الشخصية. نحن نلتزم بحماية خصوصيتك وضمان تجربة تسوق آمنة تماماً."
-          : "This policy explains how Uptown Restaurant handles your personal data. We are committed to protecting your privacy and ensuring a completely secure shopping experience."
+          ? "نقوم بجمع الحد الأدنى من البيانات اللازمة لإتمام طلباتكم، مثل الاسم، رقم الهاتف، وعنوان التوصيل. نستخدم هذه البيانات فقط لضمان وصول طلبكم بأفضل جودة."
+          : "We collect the minimum data necessary to complete your orders, such as name, phone number, and delivery address. We use this data only to ensure your order reaches you with the best quality."
       },
       {
         icon: "database",
-        title: isAr ? "البيانات التي نجمعها" : "Data We Collect",
+        title: isAr ? "استخدام البيانات" : "Data Usage",
         text: isAr
-          ? "نقوم بجمع البيانات الضرورية فقط لإتمام طلباتكم، بما في ذلك الاسم، رقم الهاتف، وعنوان التوصيل. لا نقوم بتخزين تفاصيل بطاقاتكم الائتمانية بشكل مباشر."
-          : "We collect only the data necessary to complete your orders, including name, phone number, and delivery address. We do not store your credit card details directly."
+          ? "تُستخدم بياناتكم لتحسين تجربة المستخدم، إدارة حساباتكم، والتواصل معكم بخصوص الطلبات. لا نقوم ببيع بياناتكم لأي جهة خارجية إطلاقاً."
+          : "Your data is used to improve user experience, manage your accounts, and communicate with you regarding orders. We never sell your data to any third party."
       },
       {
         icon: "lock",
-        title: isAr ? "كيفية حماية بياناتك" : "Data Protection",
+        title: isAr ? "أمان المدفوعات" : "Payment Security",
         text: isAr
-          ? "نستخدم تقنيات تشفير متطورة (SSL) لضمان سرية المعلومات. يتم الوصول إلى بياناتك فقط من قبل الموظفين المخولين لإتمام عملية التوصيل."
-          : "We use advanced encryption technologies (SSL) to ensure information confidentiality. Your data is only accessed by authorized staff to complete the delivery process."
+          ? "نحن نستخدم بوابات دفع مشغرة وآمنة (مثل Lahza/PalPay). لا نقوم بتخزين تفاصيل بطاقاتكم الائتمانية في خوادمنا، حيث تتم جميع العمليات عبر قنوات بنكية آمنة."
+          : "We use encrypted and secure payment gateways (like Lahza/PalPay). We do not store your credit card details on our servers; all transactions are processed through secure banking channels."
       },
       {
         icon: "share-2",
-        title: isAr ? "مشاركة البيانات" : "Data Sharing",
+        title: isAr ? "حقوق المستخدم" : "User Rights",
         text: isAr
-          ? "لا نقوم ببيع أو مشاركة بياناتك مع أي أطراف ثالثة لأغراض تسويقية. يتم مشاركة معلومات العنوان فقط مع فريق التوصيل الخاص بنا."
-          : "We do not sell or share your data with any third parties for marketing purposes. Address information is only shared with our delivery team."
+          ? "لكم الحق دائماً في طلب تحديث بياناتكم أو حذفها من سجلاتنا. للتواصل بشأن الخصوصية، يرجى مراسلتنا عبر uptownramallah@gmail.com."
+          : "You always have the right to request an update or deletion of your data from our records. To contact us regarding privacy, please email uptownramallah@gmail.com."
       }
     ],
     footer: isAr ? "آخر تحديث: أبريل 2026" : "Last Updated: April 2026"

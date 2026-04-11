@@ -57,15 +57,23 @@ export default function CheckoutForm({ branch, settings, lang: initialLang }: Pr
                 const dPercent = branch.discountPercent || 0;
                 const dAmount = (itemsTotal * dPercent) / 100;
 
+                // Delivery Logic
+                let effectiveFee = deliveryFee;
+                if (branch.freeDelivery) {
+                    effectiveFee = 0;
+                } else if (branch.deliveryDiscountPercent && branch.deliveryDiscountPercent > 0) {
+                    effectiveFee = effectiveFee - (effectiveFee * branch.deliveryDiscountPercent / 100);
+                }
+
                 setSubtotal(itemsTotal);
                 setDiscount(dAmount);
-                setTotal(itemsTotal - dAmount + deliveryFee);
+                setTotal(itemsTotal - dAmount + effectiveFee);
             }
         };
         syncData();
         const interval = setInterval(syncData, 1000);
         return () => clearInterval(interval);
-    }, [branch.slug, branch.discountPercent, deliveryFee]);
+    }, [branch.slug, branch.discountPercent, deliveryFee, branch.freeDelivery, branch.deliveryDiscountPercent]);
 
     // No client-side payment intent needed for Lahza redirect flow
 
@@ -102,7 +110,15 @@ export default function CheckoutForm({ branch, settings, lang: initialLang }: Pr
             const freshItemsTotal = (window as any).Cart.getTotal(branch.slug);
             const dPercent = branch.discountPercent || 0;
             const freshDAmount = (freshItemsTotal * dPercent) / 100;
-            const freshTotal = Number((freshItemsTotal - freshDAmount + deliveryFee).toFixed(2));
+
+            let freshEffectiveFee = deliveryFee;
+            if (branch.freeDelivery) {
+                freshEffectiveFee = 0;
+            } else if (branch.deliveryDiscountPercent && branch.deliveryDiscountPercent > 0) {
+                freshEffectiveFee = freshEffectiveFee - (freshEffectiveFee * branch.deliveryDiscountPercent / 100);
+            }
+
+            const freshTotal = Number((freshItemsTotal - freshDAmount + freshEffectiveFee).toFixed(2));
 
             const finalAddress = orderType === 'delivery' ? `${selectedZone} - ${address}` : address;
             try {
@@ -117,6 +133,17 @@ export default function CheckoutForm({ branch, settings, lang: initialLang }: Pr
                     totalAmount: freshTotal,
                     paymentMethod: paymentMethod === 'cash' ? 'Cash' : 'Card'
                 }, items, captchaToken || undefined);
+
+                console.log("[Checkout] Order Save Result:", res);
+
+                // Check if order was saved successfully
+                if (!res.success || !res.orderId) {
+                    alert(isAr
+                        ? `فشل حفظ الطلب: ${res.error || 'خطأ غير متوقع، يرجى المحاولة مرة أخرى'}`
+                        : `Failed to save order: ${res.error || 'Unexpected error, please try again'}`
+                    );
+                    return;
+                }
 
                 if (res.isDemo && typeof window !== "undefined") {
                     console.log("[Checkout] Saving demo data locally for success page fallback");
@@ -192,13 +219,16 @@ export default function CheckoutForm({ branch, settings, lang: initialLang }: Pr
     };
 
     return (
-        <div className="uptown-checkout-wrapper" style={{ maxWidth: '900px', margin: '60px auto', padding: '0 20px' }}>
-            <div style={{ textAlign: 'center', marginBottom: '40px' }}>
-                <img src="/logo.jpeg" alt="Uptown" style={{ display: 'block', margin: '0 auto 20px auto', height: '80px' }} />
-                <h1 style={{ fontSize: '2.5rem', fontWeight: 900, marginBottom: '10px' }}>{isAr ? 'إتمام الطلب' : 'Checkout'}</h1>
-                <p style={{ fontWeight: 800, color: '#8b0000', fontSize: '1.1rem', marginBottom: '15px' }}>{isAr ? branch.nameAr : branch.nameEn}</p>
-                <button onClick={() => window.history.back()} style={{ color: '#666', fontWeight: 700, background: 'none', border: 'none', cursor: 'pointer' }}>{isAr ? '← رجوع للقائمة' : '← Back to Menu'}</button>
-            </div>
+        <div className="uptown-checkout-wrapper" style={{ margin: '0 auto', background: '#fff' }}>
+
+
+            <div style={{ maxWidth: '900px', margin: '40px auto', padding: '0 20px' }}>
+                <div style={{ textAlign: 'center', marginBottom: '40px' }}>
+                    <h1 style={{ fontSize: '2rem', fontWeight: 900, marginBottom: '5px' }}>{isAr ? 'إتمام الطلب' : 'Checkout'}</h1>
+                    <p style={{ fontWeight: 800, color: '#8b0000', fontSize: '1rem', marginBottom: '15px' }}>{isAr ? branch.nameAr : branch.nameEn}</p>
+                    <button onClick={() => window.history.back()} style={{ color: '#666', fontWeight: 700, background: 'none', border: 'none', cursor: 'pointer', fontSize: '14px' }}>{isAr ? '← رجوع للقائمة' : '← Back to Menu'}</button>
+                </div>
+
 
             {!isOpen && (
                 <div style={{
@@ -278,17 +308,33 @@ export default function CheckoutForm({ branch, settings, lang: initialLang }: Pr
 
                         {orderType === 'delivery' && (
                             <div style={{ gridColumn: 'span 2' }}>
-                                <label style={{ display: 'block', fontWeight: 800, marginBottom: '15px' }}>{isAr ? 'منطقة التوصيل' : 'Delivery Zone'} <span className="required-star">*</span></label>
-                                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(140px, 1fr))', gap: '10px' }}>
-                                    {branch.deliveryZones?.map(z => {
-                                        const zoneName = isAr ? (z.nameAr || (z as any).name) : (z.nameEn || (z as any).name);
-                                        return (
-                                            <div key={zoneName} onClick={() => { setDeliveryFee(z.fee); setSelectedZone(zoneName); }} className={`premium-choice-card sm ${selectedZone === zoneName ? 'active' : ''}`}>
-                                                <span style={{ fontSize: '13px' }}>{zoneName}</span>
-                                                <span style={{ fontSize: '11px', opacity: 0.6 }}>+{z.fee} {settings.currencySymbol}</span>
-                                            </div>
-                                        );
-                                    })}
+                                <label style={{ display: 'block', fontWeight: 800, marginBottom: '10px' }}>{isAr ? 'منطقة التوصيل' : 'Delivery Zone'} <span className="required-star">*</span></label>
+                                <div style={{ position: 'relative' }}>
+                                    <select 
+                                        className="uptown-input premium-select" 
+                                        style={{ width: '100%', appearance: 'none', WebkitAppearance: 'none', cursor: 'pointer' }}
+                                        value={selectedZone}
+                                        onChange={(e) => {
+                                            const zone = branch.deliveryZones?.find(z => (isAr ? (z.nameAr || (z as any).name) : (z.nameEn || (z as any).name)) === e.target.value);
+                                            if (zone) {
+                                                setDeliveryFee(zone.fee);
+                                                setSelectedZone(e.target.value);
+                                            } else {
+                                                setDeliveryFee(0);
+                                                setSelectedZone("");
+                                            }
+                                        }}
+                                    >
+                                        <option value="">{isAr ? '--- اختر المنطقة ---' : '--- Choose Zone ---'}</option>
+                                        {branch.deliveryZones?.map((z, zIdx) => {
+                                            const zoneName = isAr ? (z.nameAr || z.name_ar || (z as any).name) : (z.nameEn || z.name_en || (z as any).name);
+                                            if (!zoneName) return null;
+                                            return <option key={`zone-${zIdx}`} value={zoneName}>{zoneName} (+{z.fee} {settings.currencySymbol})</option>;
+                                        })}
+                                    </select>
+                                    <div style={{ position: 'absolute', top: '50%', right: isAr ? 'auto' : '20px', left: isAr ? '20px' : 'auto', transform: 'translateY(-50%)', pointerEvents: 'none', color: '#8B0000' }}>
+                                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                                    </div>
                                 </div>
                                 <div className="uptown-input-group" style={{ marginTop: '20px' }}>
                                     <label>{isAr ? 'العنوان بالتفصيل' : 'Detailed Address'} *</label>
@@ -337,15 +383,21 @@ export default function CheckoutForm({ branch, settings, lang: initialLang }: Pr
                                     <span>-{discount.toFixed(2)} {settings.currencySymbol}</span>
                                 </div>
                             )}
-                            {deliveryFee > 0 && (
-                                <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '14px', color: '#666', fontWeight: 700, marginBottom: '8px' }}>
-                                    <span>{isAr ? 'رسوم التوصيل' : 'Delivery Fee'}</span>
-                                    <span>+{deliveryFee.toFixed(2)} {settings.currencySymbol}</span>
+                            {!!branch.deliveryDiscountPercent && branch.deliveryDiscountPercent > 0 && deliveryFee > 0 && (
+                                <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '14px', color: '#059669', fontWeight: 700, marginBottom: '8px' }}>
+                                    <span>{isAr ? 'خصم التوصيل' : 'Delivery Discount'} ({branch.deliveryDiscountPercent}%)</span>
+                                    <span>-{(deliveryFee * (branch.deliveryDiscountPercent || 0) / 100).toFixed(2)} {settings.currencySymbol}</span>
                                 </div>
                             )}
-                            <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '1.2rem', color: '#E31E24', fontWeight: 900, marginTop: '10px' }}>
+                            {branch.freeDelivery && deliveryFee > 0 && (
+                                <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '14px', color: '#059669', fontWeight: 700, marginBottom: '8px' }}>
+                                    <span>{isAr ? 'عرض التوصيل المجاني' : 'Free Delivery Offer'}</span>
+                                    <span>-{deliveryFee.toFixed(2)} {settings.currencySymbol}</span>
+                                </div>
+                            )}
+                            <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '1.2rem', color: '#8B0000', fontWeight: 900, marginTop: '10px' }}>
                                 <span>{isAr ? 'المجموع النهائي' : 'Grand Total'}</span>
-                                <span>{total.toFixed(2)} {settings.currencySymbol}</span>
+                                <span>{(total || 0).toFixed(2)} {settings.currencySymbol}</span>
                             </div>
                         </div>
                     </div>
@@ -373,10 +425,20 @@ export default function CheckoutForm({ branch, settings, lang: initialLang }: Pr
                         </div>
                     )}
 
-                    <div style={{ marginBottom: '30px' }}>
-                        <label style={{ display: 'flex', gap: '12px', alignItems: 'center', cursor: 'pointer' }}>
-                            <input type="checkbox" id="policy-accept" required style={{ width: '22px', height: '22px' }} />
-                            <span style={{ fontSize: '13px', fontWeight: 600 }}>{isAr ? 'أوافق على الشروط والسياسات' : 'I accept the terms and policies'}</span>
+                    <div style={{ marginBottom: '30px', padding: '15px', background: '#fff', borderRadius: '15px', border: '1px solid #eee' }}>
+                        <label style={{ display: 'flex', gap: '12px', alignItems: 'flex-start', cursor: 'pointer' }}>
+                            <input type="checkbox" id="policy-accept" required style={{ width: '22px', height: '22px', marginTop: '3px', accentColor: '#8B0000' }} />
+                            <span style={{ fontSize: '13px', fontWeight: 600, color: '#444', lineHeight: '1.5' }}>
+                                {isAr ? (
+                                    <>
+                                        أوافق على <a href="/policies/return" target="_blank" style={{ color: '#8B0000', textDecoration: 'underline' }}>سياسة الإرجاع والتبديل</a> و <a href="/policies/privacy" target="_blank" style={{ color: '#8B0000', textDecoration: 'underline' }}>سياسة الخصوصية</a>
+                                    </>
+                                ) : (
+                                    <>
+                                        I accept the <a href="/policies/return" target="_blank" style={{ color: '#8B0000', textDecoration: 'underline' }}>Return & Exchange Policy</a> and <a href="/policies/privacy" target="_blank" style={{ color: '#8B0000', textDecoration: 'underline' }}>Privacy Policy</a>
+                                    </>
+                                )}
+                            </span>
                         </label>
                     </div>
 
@@ -446,6 +508,7 @@ export default function CheckoutForm({ branch, settings, lang: initialLang }: Pr
                 .uptown-btn:hover { transform: scale(1.02); opacity: 0.95; }
                 .uptown-btn:disabled { opacity: 0.5; cursor: not-allowed; }
             ` }} />
+            </div>
         </div>
     );
 }

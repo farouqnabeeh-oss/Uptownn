@@ -33,19 +33,19 @@ export default async function HomePage() {
       <LocationInitializer branches={branches} lang={lang} />
 
       {/* 🌟 BRANCHES SECTION (Main Focus) */}
-      <section id="branches" className="premium-section" style={{ padding: '40px 20px', maxWidth: '1400px', margin: '0 auto' }}>
+      <section id="branches" className="premium-section" style={{ padding: '10px 20px 40px', maxWidth: '1400px', margin: '0 auto' }}>
 
 
-        <div className="premium-section-header" style={{ textAlign: 'center', marginBottom: '50px' }}>
+        <div className="premium-section-header" style={{ textAlign: 'center', marginBottom: '30px' }}>
           <h1 className="premium-title" style={{
-            fontSize: 'max(2.8rem, 5vw)',
+            fontSize: 'max(1.8rem, 3.5vw)',
             color: '#0a1d37',
             fontWeight: 900,
-            marginBottom: '15px'
+            marginBottom: '10px'
           }}>
             {isAr ? "مرحباً بكم في UPTOWN" : "Welcome to UPTOWN"}
           </h1>
-          <p style={{ color: '#888', fontSize: '1.2rem', fontWeight: 600 }}>
+          <p style={{ color: '#888', fontSize: '1rem', fontWeight: 600 }}>
             {isAr ? "اختر الفرع" : "Choose the branch"}
           </p>
         </div>

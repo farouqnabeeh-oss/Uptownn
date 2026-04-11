@@ -8,6 +8,11 @@ export async function POST(req: Request) {
 
     console.log(`[Lahza] Initiation request for Order #${orderId}, Amount: ${amount} ${currency}`);
     
+    // Guard: orderId must be present (order save must have succeeded)
+    if (!orderId) {
+      return NextResponse.json({ success: false, error: "Order was not saved correctly. Please try again." }, { status: 400 });
+    }
+
     // Ensure amount is a number and valid
     const numericAmount = Number(amount);
     if (isNaN(numericAmount) || numericAmount <= 0) {
@@ -49,7 +54,11 @@ export async function POST(req: Request) {
         console.log("Lahza Authorization URL generated:", result.data.authorization_url);
         return NextResponse.json({ success: true, authorizationUrl: result.data.authorization_url });
     } else {
-        throw new Error(result.message || "Failed to get authorization URL from Lahza");
+        const msg = result.message || "Failed to get authorization URL from Lahza";
+        if (msg.includes("Invalid Key") || msg.includes("Key")) {
+            throw new Error("Invalid LAHZA_SECRET_KEY. Please verify your .env configuration.");
+        }
+        throw new Error(msg);
     }
 
   } catch (error: any) {
