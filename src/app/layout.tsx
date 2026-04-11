@@ -80,46 +80,13 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         </div>
 
         <div className="header-right" id="header-cart-container" style={{ display: 'flex', justifyContent: 'flex-end', paddingTop: '4px' }}>
-          <button
-            id="cart-btn"
-            aria-label="Cart"
-            style={{
-              display: 'none',
-              background: '#f5f5f5',
-              border: 'none',
-              cursor: 'pointer',
-              padding: '10px',
-              position: 'relative',
-              borderRadius: '50%',
-              width: '44px',
-              height: '44px',
-              alignItems: 'center',
-              justifyContent: 'center',
-              boxShadow: '0 2px 8px rgba(0,0,0,0.08)'
-            }}
-          >
-            <span id="cart-badge" style={{
-              position: 'absolute',
-              top: '2px',
-              right: '2px',
-              background: '#cf1f28',
-              color: '#fff',
-              fontSize: '10px',
-              fontWeight: 900,
-              width: '18px',
-              height: '18px',
-              borderRadius: '50%',
-              display: 'none',
-              alignItems: 'center',
-              justifyContent: 'center',
-              boxShadow: '0 2px 6px rgba(207,31,40,0.4)'
-            }}>0</span>
-            {/* Shopping Cart Icon */}
-            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#111" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <button id="cart-btn" className="header-icon-btn cart-btn" style={{ display: 'none' }} aria-label="Cart">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
               <circle cx="8" cy="21" r="1"></circle>
               <circle cx="19" cy="21" r="1"></circle>
               <path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12"></path>
             </svg>
+            <span id="cart-badge" className="cart-badge" style={{ display: 'none' }}>0</span>
           </button>
         </div>
       </div>

@@ -329,7 +329,10 @@ export default function CheckoutForm({ branch, settings, lang: initialLang }: Pr
                                         {(branch.deliveryZones ?? []).length > 0 ? (branch.deliveryZones ?? []).map((z, zIdx) => {
                                             const zoneName = isAr ? z.nameAr : z.nameEn;
                                             if (!zoneName) return null;
-                                            return <option key={`zone-${zIdx}`} value={zoneName}>{zoneName} (+{z.fee} {settings.currencySymbol})</option>;
+                                            const feeText = z.fee === 0 
+                                                ? (isAr ? 'مجاناً' : 'Free') 
+                                                : `+${z.fee} ${settings.currencySymbol}`;
+                                            return <option key={`zone-${zIdx}`} value={zoneName}>{zoneName} ({feeText})</option>;
                                         }) : <option value="Manual" disabled>{isAr ? 'المناطق غير متاحة حالياً' : 'Zones momentarily unavailable'}</option>}
                                     </select>
                                 </div>

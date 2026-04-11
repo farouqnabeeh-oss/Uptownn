@@ -301,6 +301,10 @@ html[dir="rtl"] .side-panel {
     right: auto;
     left: -450px;
 }
+html[dir="ltr"] .side-panel {
+    right: -450px;
+    left: auto;
+}
 
 .side-panel.is-active {
     transform: translateX(-450px);
@@ -435,5 +439,5 @@ html[dir="rtl"] .side-panel.is-active {
 
 .add-to-cart-btn:hover {
     transform: translateY(-2px);
-    box-shadow: 0 15px 30px rgba(139, 0, 0, 0.5);
+    /* box-shadow: 0 15px 30px rgba(139, 0, 0, 0.5); */
 }

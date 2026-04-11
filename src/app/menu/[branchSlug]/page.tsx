@@ -85,7 +85,7 @@ export default async function MenuPage({ params }: MenuPageProps) {
         /* 🚀 STICKY FILTER: PRECISE ALIGNMENT */
         .sticky-category-bar { 
           position: sticky; top: 90px; z-index: 1000; 
-          padding: 15px 0; background: rgba(255, 255, 255, 1); border-bottom: 1px solid #f0f0f0; 
+          padding: 15px 0; background: rgba(255, 255, 255, 0.96); border-bottom: 1px solid #f0f0f0; 
           box-shadow: 0 4px 12px rgba(0,0,0,0.03);
         }
         .category-scroll { display: flex; gap: 10px; overflow-x: auto; padding: 0 15px; scrollbar-width: none; }
