@@ -591,8 +591,20 @@ export async function getAdminData() {
   const menuBanners = (menuBannersResult.data ?? []).map((row) => mapMenuBanner(row));
   const settings = settingsResult.data ? mapSettings(settingsResult.data) : null;
   const orders = (ordersResult.data ?? []).map((row: any) => ({
-    ...row,
     id: Number(row.id),
+    branchId: Number(row.branch_id),
+    customerId: row.customer_id,
+    customerName: String(row.customer_name ?? ""),
+    customerPhone: String(row.customer_phone ?? ""),
+    customerEmail: String(row.customer_email ?? ""),
+    orderType: row.order_type as any,
+    address: row.address,
+    tableNumber: row.table_number,
+    totalAmount: Number(row.total_amount ?? 0),
+    status: row.status as any,
+    paymentMethod: row.payment_method as any,
+    paymentStatus: row.payment_status as any,
+    createdAt: row.created_at,
     branch: row.branches ? mapBranch(row.branches) : null,
     items: (row.order_items ?? []).map((item: any) => ({
         id: Number(item.id),

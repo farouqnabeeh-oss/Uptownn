@@ -124,7 +124,7 @@ export function AdminIntelligenceTab({ orders, branches }: Props) {
                 <td>#{order.id}</td>
                 <td>{order.branch?.nameAr || "N/A"}</td>
                 <td>{order.customerName}</td>
-                <td style={{ fontWeight: 900 }}>{order.totalAmount.toFixed(2)} ₪</td>
+                <td style={{ fontWeight: 900 }}>{(order.totalAmount ?? 0).toFixed(2)} ₪</td>
                 <td>
                   <span className={`ultra-branch-badge-fire ${order.status.toLowerCase()}`} style={{ background: order.status === 'Paid' || order.status === 'Delivered' ? '#11a85f' : order.status === 'Cancelled' ? '#e63946' : 'var(--primary)', color: '#fff' }}>
                     {order.status}
@@ -153,7 +153,7 @@ export function AdminIntelligenceTab({ orders, branches }: Props) {
                         const res = await getOrderSummary(order.id);
                         if(res.success) {
                             const items = res.order.order_items.map((i:any) => `${i.quantity}x ${i.product_name_ar || i.product_name_en} (${i.price}₪) \n${i.addon_details || ''}`).join('\n\n');
-                            alert(`Order #${order.id} details:\n\nCustomer: ${order.customerName}\nPhone: ${order.customerPhone}\nType: ${order.order_type}\nAddress: ${order.address || 'N/A'}\n\nItems:\n${items}`);
+                            alert(`Order #${order.id} details:\n\nCustomer: ${order.customerName}\nPhone: ${order.customerPhone}\nType: ${order.orderType}\nAddress: ${order.address || 'N/A'}\n\nItems:\n${items}`);
                         }
                     }}>Details</button>
                 </td>
