@@ -93,7 +93,7 @@ export default function MenuClient({ categories, allProducts, branch, isAr, curr
             const fullProduct = await res.json();
             window.UI.renderProductModal(fullProduct, fullProduct.addonGroups || [], branch.slug, currency, 0);
           } catch (e: any) {
-            console.error(\`[Product Modal] API Error for Product #\${id}:\`, e);
+            console.error("[Product Modal] API Error for Product #" + id + ":", e);
             const p = allProducts.find(x => String(x.id) === String(id));
             if (p) window.UI.renderProductModal(p, [], branch.slug, currency, 0);
           } finally {
