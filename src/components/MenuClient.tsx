@@ -57,17 +57,17 @@ export default function MenuClient({ categories, allProducts, branch, isAr, curr
           const image = p.imagePath || '/images/classic-cheeseburger__0x1e3y1qv68eiip.jpg';
           
           content += `
-            <div class="up-card" data-pid="${p.id}" onclick="window.viewP('${p.id}')">
+            <div class="up-card" data-pid="${p.id}">
               ${disc > 0 ? `<div class="up-fire-badge">🔥 -${disc}%</div>` : ''}
-              <div class="up-img-wrap"><img src="${image}" class="up-img" loading="lazy" /></div>
+              <div class="up-img-wrap" onclick="window.viewP('${p.id}')" style="cursor:pointer"><img src="${image}" class="up-img" loading="lazy" /></div>
               <div class="up-body">
-                <div class="up-title">${isAr ? p.nameAr : p.nameEn}</div>
+                <div class="up-title" onclick="window.viewP('${p.id}')" style="cursor:pointer">${isAr ? p.nameAr : p.nameEn}</div>
                 <div class="up-footer">
                   <div class="up-price-box">
                     <span class="up-price-tag">${finalPrice.toFixed(0)}${currency}</span>
                     ${disc > 0 ? `<span class="up-price-old">${priceRaw.toFixed(0)}${currency}</span>` : ''}
                   </div>
-                  <button class="up-add-pill">${isAr ? "أضف للسلة" : "Add to Cart"}</button>
+                  <button class="up-add-pill" onclick="event.stopPropagation(); window.viewP('${p.id}')">${isAr ? "أضف للسلة" : "Add to Cart"}</button>
                 </div>
               </div>
             </div>`;
@@ -78,26 +78,29 @@ export default function MenuClient({ categories, allProducts, branch, isAr, curr
       const renderArea = document.getElementById("uptown-render-area");
       if (renderArea) renderArea.innerHTML = content;
 
-      // 4. Global viewP handler
       window.viewP = async (id: string | number) => {
-        const card = document.querySelector(`[data-pid="${id}"]`);
-        const btn = card?.querySelector('.up-add-pill');
-        const originalText = btn ? btn.textContent : '';
-        
         try {
-          if (btn) btn.textContent = isAr ? 'جاري التحميل...' : 'Loading...';
+          const card = document.querySelector(`[data-pid="${id}"]`);
+          const btn = card?.querySelector('.up-add-pill');
+          const originalText = btn ? btn.textContent : '';
           
-          const res = await fetch(`/api/ProductsApi/${id}`);
-          if (!res.ok) throw new Error("Product data fetch failed");
-          
-          const fullProduct = await res.json();
-          window.UI.renderProductModal(fullProduct, fullProduct.addonGroups || [], branch.slug, currency, 0);
-        } catch (e) {
-          console.error(`[Product Modal] API Error for Product #${id}:`, e);
-          const p = allProducts.find(x => String(x.id) === String(id));
-          if (p) window.UI.renderProductModal(p, [], branch.slug, currency, 0);
-        } finally {
-          if (btn) btn.textContent = originalText;
+          try {
+            if (btn) btn.textContent = isAr ? 'جاري التحميل...' : 'Loading...';
+            
+            const res = await fetch(`/api/ProductsApi/${id}`);
+            if (!res.ok) throw new Error("Product data fetch failed");
+            
+            const fullProduct = await res.json();
+            window.UI.renderProductModal(fullProduct, fullProduct.addonGroups || [], branch.slug, currency, 0);
+          } catch (e: any) {
+            console.error(\`[Product Modal] API Error for Product #\${id}:\`, e);
+            const p = allProducts.find(x => String(x.id) === String(id));
+            if (p) window.UI.renderProductModal(p, [], branch.slug, currency, 0);
+          } finally {
+            if (btn) btn.textContent = originalText;
+          }
+        } catch (fatal: any) {
+           alert("Fatal click error: " + fatal.message + " | Stack: " + fatal.stack);
         }
       };
 
