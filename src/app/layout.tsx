@@ -97,9 +97,11 @@ export default async function RootLayout({ children }: { children: React.ReactNo
               justifyContent: 'center',
               boxShadow: '0 4px 10px rgba(207,31,40,0.3)'
             }}>0</span>
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#000" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-              <circle cx="8" cy="21" r="1.5"></circle><circle cx="19" cy="21" r="1.5"></circle>
-              <path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12"></path>
+            {/* Shopping Bag icon */}
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#000" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path>
+              <line x1="3" y1="6" x2="21" y2="6"></line>
+              <path d="M16 10a4 4 0 0 1-8 0"></path>
             </svg>
           </button>
         </div>
