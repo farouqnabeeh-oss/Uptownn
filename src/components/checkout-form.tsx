@@ -327,7 +327,7 @@ export default function CheckoutForm({ branch, settings, lang: initialLang }: Pr
                                     >
                                         <option value="">{isAr ? '--- اختر المنطقة ---' : '--- Choose Zone ---'}</option>
                                         {branch.deliveryZones?.map((z, zIdx) => {
-                                            const zoneName = isAr ? (z.nameAr || z.name_ar || (z as any).name) : (z.nameEn || z.name_en || (z as any).name);
+                                            const zoneName = isAr ? z.nameAr : z.nameEn;
                                             if (!zoneName) return null;
                                             return <option key={`zone-${zIdx}`} value={zoneName}>{zoneName} (+{z.fee} {settings.currencySymbol})</option>;
                                         })}

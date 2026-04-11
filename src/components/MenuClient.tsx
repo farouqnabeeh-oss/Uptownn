@@ -99,21 +99,22 @@ export default function MenuClient({ categories, allProducts, branch, isAr, curr
 
       // 4. Global viewP handler
       window.viewP = async (id: string | number) => {
-        const p = allProducts.find(x => String(x.id) === String(id));
-        if (!p) return;
-        let ads = [];
         try {
-          const res = await fetch("/api/AddonsApi?productId=" + id);
-          if (res.ok) {
-            ads = await res.json();
-            console.log(`[Addons] Fetched ${ads.length} groups for Product #${id}:`, ads);
-          } else {
-            console.error(`[Addons] Failed to fetch for Product #${id}:`, res.statusText);
-          }
+          // Fetch the FULL product details including addonGroups, sizes, and types
+          const res = await fetch(`/api/ProductsApi/${id}`);
+          if (!res.ok) throw new Error("Product data fetch failed");
+          
+          const fullProduct = await res.json();
+          const ads = fullProduct.addonGroups || [];
+          
+          console.log(`[Product Modal] Fetched full details for #${id}:`, fullProduct);
+          window.UI.renderProductModal(fullProduct, ads, branch.slug, currency, 0);
         } catch (e) {
-          console.error(`[Addons] API Error for Product #${id}:`, e);
+          console.error(`[Product Modal] API Error for Product #${id}:`, e);
+          // Fallback to local data if API fails (though options might be missing)
+          const p = allProducts.find(x => String(x.id) === String(id));
+          if (p) window.UI.renderProductModal(p, [], branch.slug, currency, 0);
         }
-        window.UI.renderProductModal(p, ads, branch.slug, currency, 0);
       };
 
       // 5. Hero Cycling
