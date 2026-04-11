@@ -649,7 +649,7 @@ textarea:focus {
 
 @media (max-width: 768px) {
   .calm-header-inner {
-    padding: 0 20px;
+    padding: 0 10px;
   }
 
   .calm-nav {
@@ -2478,6 +2478,7 @@ html[dir="rtl"] .branch-discount-badge {
 }
 
 @media (max-width: 640px) {
+
   .add-to-cart-btn,
   .checkout-btn,
   .submit-order-btn {
@@ -2597,7 +2598,7 @@ html[dir="rtl"] .branch-discount-badge {
 .checkout-page {
   max-width: 720px;
   margin: 0 auto;
-  padding: 34px 18px 60px;
+  padding: 5px 24px;
 }
 
 .checkout-title {

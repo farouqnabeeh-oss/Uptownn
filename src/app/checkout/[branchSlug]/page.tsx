@@ -22,11 +22,11 @@ export default async function CheckoutPage({ params }: CheckoutPageProps) {
         .checkout-page-container {
           max-width: 900px;
           margin: 0 auto;
-          padding: 120px 24px 100px;
+          padding: 5px 24px 100px;
         }
         @media (max-width: 768px) {
           .checkout-page-container {
-            padding: 50px 15px 50px;
+            padding: 20px 15px 50px;
           }
         }
       `}</style>

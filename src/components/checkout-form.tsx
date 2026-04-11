@@ -222,7 +222,7 @@ export default function CheckoutForm({ branch, settings, lang: initialLang }: Pr
         <div className="uptown-checkout-wrapper" style={{ margin: '0 auto', background: '#fff' }}>
 
 
-            <div style={{ maxWidth: '900px', margin: '40px auto', padding: '0 20px' }}>
+            <div style={{ maxWidth: '900px', margin: '40px auto', padding: '0 1px' }}>
                 <div style={{ textAlign: 'center', marginBottom: '40px' }}>
                     <h1 style={{ fontSize: '2rem', fontWeight: 900, marginBottom: '5px' }}>{isAr ? 'إتمام الطلب' : 'Checkout'}</h1>
                     <p style={{ fontWeight: 800, color: '#8b0000', fontSize: '1rem', marginBottom: '15px' }}>{isAr ? branch.nameAr : branch.nameEn}</p>

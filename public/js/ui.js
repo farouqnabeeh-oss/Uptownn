@@ -434,18 +434,26 @@ const UI = {
                         );
                         UI.hideModal('product-modal-overlay', 'product-modal');
                         UI.updateCartBadge(branchSlug);
-                        // Show cart modal for feedback
-                        setTimeout(() => {
-                            UI.renderCartModal(branchSlug, currency);
-                            UI.showModal('cart-modal-overlay', 'cart-modal');
-                        }, 300);
+                        
+                        // User specifically requested NOT to auto-open the cart when adding items
+                        // setTimeout(() => {
+                        //     UI.renderCartModal(branchSlug, currency);
+                        //     UI.showModal('cart-modal-overlay', 'cart-modal');
+                        // }, 300);
+                        
+                        // Provide feedback inside the site button or custom toast if needed
                     }
                 });
             });
         };
 
-        render();
-        UI.showModal('product-modal-overlay', 'product-modal');
+        try {
+            render();
+            UI.showModal('product-modal-overlay', 'product-modal');
+        } catch (e) {
+            console.error("Failed to render product modal:", e);
+            alert("Sorry, an error occurred while displaying the product. Error: " + e.message);
+        }
     }
 };
 

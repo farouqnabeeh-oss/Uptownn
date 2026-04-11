@@ -139,7 +139,7 @@ export default async function MenuPage({ params }: MenuPageProps) {
         
         .up-add-pill { 
           background: linear-gradient(135deg, #8B0000 0%, #B91C1C 100%); 
-          color: #fff; border: none; padding: 12px 24px; border-radius: 12px; font-weight: 900; 
+          color: #fff; border: none; padding: 10px 15px; border-radius: 12px; font-weight: 900; 
           font-size: 13px; cursor: pointer; transition: 0.3s; box-shadow: 0 6px 15px rgba(139, 0, 0, 0.4); 
         }
 
@@ -158,7 +158,7 @@ export default async function MenuPage({ params }: MenuPageProps) {
           .up-title { font-size: 1.1rem; }
           .up-price-tag { font-size: 1.2rem; }
           .up-desc { display: none; } 
-          .up-add-pill { padding: 6px 5px; font-size: 10px; border-radius: 6px; }
+          .up-add-pill { padding: 6px 15px; font-size: 10px; border-radius: 6px; }
           .up-footer { padding-top: 5px; }
         }
 
